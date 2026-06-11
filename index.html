@@ -554,11 +554,7 @@ function rEval(){
     });
   });
   document.getElementById('ebody').innerHTML=h;
-  const risk=rM[pid]||'';
-  ['v','a','r'].forEach(x=>{
-    const cls='rb'+(risk===x?(' r'+(x==='r'?'r2':x)):'');
-    document.getElementById('r-'+x).className=cls;
-  });
+  // risk is now automatic - no manual buttons
   document.getElementById('eobs').value=oM[pid]||'';
   // Reset risk display if no answers yet, else show current
   const box=document.getElementById('risk-auto');
