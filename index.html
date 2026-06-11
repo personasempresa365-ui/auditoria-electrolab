@@ -427,28 +427,106 @@ window.filtH=function(){
 
 window.showD=function(id){
   const a=aAll.find(x=>x.id===id);if(!a)return;
-  const rT={v:'\uD83D\uDFE2 Verde',a:'\uD83D\uDFE1 Amarillo',r:'\uD83D\uDD34 Rojo','':'No registrado'};
-  let h=`<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:44px;height:44px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0">${ini(a.colab)}</div><div><p style="font-size:16px;font-weight:700">${a.colab}</p>${a.cargo?`<p style="font-size:12px;color:var(--mid)">${a.cargo}</p>`:''}</div></div><div class="sr"><span class="sl">Sucursal</span><span class="sv">${a.suc}</span></div><div class="sr"><span class="sl">TL</span><span class="sv">${a.tl}</span></div><div class="sr"><span class="sl">Analista RH</span><span class="sv">${a.rh||''}</span></div><div class="sr"><span class="sl">Fecha</span><span class="sv">${a.fecha}</span></div></div>`;
-  a.pils.forEach(pd=>{
-    const p=PL.find(x=>x.id===pd.id);if(!p)return;
+  const rT={v:'\uD83D\uDFE2 Verde \u2014 sin riesgo',a:'\uD83D\uDFE1 Amarillo \u2014 moderado',r:'\uD83D\uDD34 Rojo \u2014 cr\u00edtico','':'No registrado'};
+  let totalSi=0,totalTot=0;
+  a.pils.forEach(p=>{totalSi+=p.si;totalTot+=p.tot;});
+  const globalPct=totalTot>0?Math.round(totalSi/totalTot*100):0;
+  const globalLbl=lbl(totalSi,totalTot);
+  const gColors={'bge':'#1A6B2F','bgy':'#7A5200','bgr':'#8B1A1A'};
+  const gBgs={'bge':'#E5F5EA','bgy':'#FFF8E1','bgr':'#FDEAEA'};
+  const gc=gColors[globalLbl.c]||'#333',gbg=gBgs[globalLbl.c]||'#f5f5f5';
+  let h='<div class="card">'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'
+    +'<div style="width:48px;height:48px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">'+ini(a.colab)+'</div>'
+    +'<div><p style="font-size:16px;font-weight:700">'+a.colab+'</p>'
+    +'<p style="font-size:12px;color:var(--mid)">'+(a.cargo?a.cargo+' &middot; ':'')+'<strong>'+a.suc+'</strong></p></div></div>'
+    +'<div style="background:'+gbg+';border-radius:10px;padding:14px;text-align:center;margin-bottom:14px">'
+    +'<p style="font-size:36px;font-weight:700;color:'+gc+'">'+globalPct+'%</p>'
+    +'<p style="font-size:14px;font-weight:600;color:'+gc+'">'+globalLbl.t+'</p>'
+    +'<p style="font-size:12px;color:var(--mid);margin-top:2px">'+totalSi+' de '+totalTot+' &iacute;tems cumplidos</p>'
+    +'</div>'
+    +'<div class="sr"><span class="sl">TL / Supervisor</span><span class="sv">'+a.tl+'</span></div>'
+    +'<div class="sr"><span class="sl">Analista RH</span><span class="sv">'+(a.rh||'')+'</span></div>'
+    +'<div class="sr"><span class="sl">Fecha</span><span class="sv">'+a.fecha+'</span></div>'
+    +'</div>'
+    +'<div class="card"><p class="ct">RESULTADO POR PILAR</p>';
+  a.pils.forEach(function(pd){
+    const p=PL.find(function(x){return x.id===pd.id;});if(!p)return;
     const pct=pd.tot>0?Math.round(pd.si/pd.tot*100):0,lb=lbl(pd.si,pd.tot);
-    h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><p style="font-size:14px;font-weight:700;color:${p.color}">${p.name}</p><span class="badge ${lb.c}">${pd.si}/${pd.tot}</span></div><div class="sb"><div class="sf" style="width:${pct}%;background:${p.color}"></div></div><p style="font-size:11px;color:var(--mid);margin-bottom:10px">${pct}% &mdash; ${lb.t}</p>`;
-    let n=0;
-    p.secs.forEach((sec,si)=>{
-      h+=`<div class="sh" style="background:${p.color}">${sec.t}</div>`;
-      sec.items.forEach((item,ii)=>{
-        const ans=(pd.answers||{})[si+'-'+ii]||'';
-        const dot=ans==='si'?`<span style="color:var(--ok);font-weight:600">S&iacute;</span>`:ans==='no'?`<span style="color:var(--no);font-weight:600">No</span>`:`<span style="color:var(--mid)">N/A</span>`;
-        n++;h+=`<div class="ir"><span class="it">${n}. ${item}</span><div style="flex-shrink:0;margin-left:8px;font-size:12px">${dot}</div></div>`;
+    h+='<div style="margin-bottom:14px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+      +'<span style="font-size:13px;font-weight:600;color:'+p.color+'">'+p.name+'</span>'
+      +'<span class="badge '+lb.c+'">'+pd.si+'/'+pd.tot+' &mdash; '+lb.t+'</span></div>'
+      +'<div class="sb"><div class="sf" style="width:'+pct+'%;background:'+p.color+'"></div></div>'
+      +'<div style="display:flex;justify-content:space-between;margin-top:3px">'
+      +'<span style="font-size:11px;color:var(--mid)">'+pct+'%</span>'
+      +'<span style="font-size:11px;color:var(--mid)">'+(rT[pd.risk]||'')+'</span></div>'
+      +(pd.obs?'<div style="margin-top:5px;font-size:11px;color:var(--mid);background:var(--eg);border-radius:6px;padding:6px 8px">&#128203; '+pd.obs+'</div>':'')
+      +'</div>';
+  });
+  h+='</div>';
+  const itemsNo=[];
+  a.pils.forEach(function(pd){
+    const p=PL.find(function(x){return x.id===pd.id;});if(!p)return;
+    p.secs.forEach(function(sec,si){
+      sec.items.forEach(function(item,ii){
+        if((pd.answers||{})[si+'-'+ii]==='no'){
+          const ak=pd.id+'-'+si+'-'+ii;
+          itemsNo.push({pilar:p.name,color:p.color,light:p.light,item:item,accion:ACCIONES[ak]||'Revisar con el TL y establecer un compromiso de mejora con fecha.'});
+        }
       });
     });
-    h+=`<div class="dv"></div><div style="font-size:12px;color:var(--mid)">Riesgo: <span style="font-weight:600">${rT[pd.risk]||'No registrado'}</span></div>`;
-    if(pd.obs)h+=`<div style="margin-top:6px;font-size:12px;color:var(--mid)">Obs: <span style="color:var(--dark)">${pd.obs}</span></div>`;
+  });
+  if(itemsNo.length>0){
+    const top3=itemsNo.slice(0,3);
+    h+='<div class="card" style="border-color:#E8181A;border-width:1.5px"><p class="ct" style="color:#E8181A">&#9888;&#65039; PLAN DE ACCI&Oacute;N SUGERIDO</p>';
+    top3.forEach(function(x,i){
+      h+='<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:'+(i<top3.length-1?'1px solid var(--eg)':'none')+'">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        +'<span style="width:22px;height:22px;border-radius:50%;background:'+x.color+';color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(i+1)+'</span>'
+        +'<span style="font-size:11px;font-weight:700;color:'+x.color+'">'+x.pilar+'</span>'
+        +'</div>'
+        +'<p style="font-size:12px;color:var(--dark);margin-bottom:6px;line-height:1.5"><strong>Punto:</strong> '+x.item+'</p>'
+        +'<div style="background:'+x.light+';border-left:3px solid '+x.color+';border-radius:0 6px 6px 0;padding:8px 10px;font-size:12px;color:var(--dark);line-height:1.5">'
+        +'&#128161; '+x.accion+'</div></div>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div class="card" style="background:var(--okl);border-color:var(--ok);text-align:center;padding:16px">'
+      +'<p style="font-size:20px;margin-bottom:6px">&#127881;</p>'
+      +'<p style="font-size:13px;font-weight:700;color:var(--ok)">Sin puntos cr&iacute;ticos</p></div>';
+  }
+  h+='<button class="btn bg2" id="btn-tog-'+a.id+'" onclick="togItems(''+a.id+'')" style="margin-top:4px">&#128203; Ver detalle de &iacute;tems</button>';
+  h+='<div id="itd-'+a.id+'" style="display:none;margin-top:8px">';
+  a.pils.forEach(function(pd){
+    const p=PL.find(function(x){return x.id===pd.id;});if(!p)return;
+    var n=0;
+    h+='<div class="card" style="padding:10px"><p style="font-size:13px;font-weight:700;color:'+p.color+';margin-bottom:8px">'+p.name+'</p>';
+    p.secs.forEach(function(sec,si){
+      h+='<div class="sh" style="background:'+p.color+'">'+sec.t+'</div>';
+      sec.items.forEach(function(item,ii){
+        const ans=(pd.answers||{})[si+'-'+ii]||'';
+        const dot=ans==='si'?'<span style="color:var(--ok);font-weight:600">S&iacute;</span>':ans==='no'?'<span style="color:var(--no);font-weight:600">No</span>':'<span style="color:var(--mid)">N/A</span>';
+        n++;h+='<div class="ir"><span class="it">'+n+'. '+item+'</span><div style="flex-shrink:0;margin-left:8px;font-size:12px">'+dot+'</div></div>';
+      });
+    });
     h+='</div>';
   });
-  if(CU.rol==='gerente')h+=`<button class="btn bd" onclick="delA('${a.id}')">&#128465; Eliminar auditor&iacute;a</button>`;
-  document.getElementById('detb').innerHTML=h;goTo('s-det');
+  h+='</div>';
+  if(CU.rol==='gerente')h+='<button class="btn bd" onclick="delA(''+a.id+'')" style="margin-top:4px">&#128465; Eliminar auditor&iacute;a</button>';
+  document.getElementById('detb').innerHTML=h;
+  goTo('s-det');
 };
+
+window.togItems=function(id){
+  const el=document.getElementById('itd-'+id);
+  const btn=document.getElementById('btn-tog-'+id);
+  if(!el||!btn)return;
+  const vis=el.style.display!=='none';
+  el.style.display=vis?'none':'block';
+  btn.textContent=vis?'\uD83D\uDCCB Ver detalle de \u00edtems':'\uD83D\uDD3C Ocultar detalle';
+};
+
 
 window.delA=async function(id){
   if(!confirm('\u00bfEliminar esta auditor\u00eda?'))return;
@@ -808,6 +886,7 @@ window.cambiarPin=async function(){
 
 // Explicit window assignments to ensure mobile onclick works
 window.iniciar=iniciar;
+window.togItems=togItems;
 window.goTo=goTo;
 window.togP=function(id){const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
 window.jmp=function(i){ci=i;sObs();rEval();};
