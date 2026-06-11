@@ -324,7 +324,11 @@ let CU=null,sel=[],sD={},rM={},oM={},ci=0,aAll=[];
 function toast(m,ok){const t=document.createElement('div');t.className='toast';t.textContent=m;t.style.background=ok===false?'#8B1A1A':'#1A3A1A';t.style.color='#fff';document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2500);}
 function ini(n){if(!n)return'?';const p=n.trim().split(' ').filter(x=>x.length>0);return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase();}
 function lbl(si,tot){const r=tot>0?si/tot:0;if(r>=0.89)return{t:'Excelente',c:'bge'};if(r>=0.67)return{t:'Satisfactorio',c:'bgy'};if(r>=0.45)return{t:'En desarrollo',c:'bgy'};return{t:'Cr\u00edtico',c:'bgr'};}
-function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);const b=el.querySelector('.body');if(b)b.scrollTop=0;}
+}
 window.goTo=goTo;
 
 window.pn=i=>{if(document.getElementById('p'+i).value&&i<3)document.getElementById('p'+(i+1)).focus();};
@@ -500,18 +504,31 @@ function buildPL(){
     document.getElementById('pl'+(g==='ventas'?'v':'r')).innerHTML=h;
   });
 }
-window.togP=id=>{const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
+window.togP=function(id){
+  const i=sel.indexOf(id);
+  if(i>=0)sel.splice(i,1);else sel.push(id);
+  buildPL();
+};
 
 window.iniciar=function(){
-  const s=document.getElementById('fs').value.trim(),c=document.getElementById('fc').value.trim(),t=document.getElementById('ft').value.trim();
-  if(!s||!c||!t){alert('Completa los campos obligatorios.');return;}
-  if(!sel.length){alert('Selecciona al menos un pilar.');return;}
-  sD={};rM={};oM={};ci=0;sel.forEach(id=>{sD[id]={};});
-  const ca=document.getElementById('fca').value.trim();
-  document.getElementById('cav').textContent=ini(c);
-  document.getElementById('cnam').textContent=c;
-  document.getElementById('crol').textContent=(ca||'Colaborador')+' \u2014 '+s;
-  rTabs();rEval();goTo('s-eval');
+  try{
+    const s=document.getElementById('fs').value.trim();
+    const c=document.getElementById('fc').value.trim();
+    const t=document.getElementById('ft').value.trim();
+    if(!s){alert('Por favor ingresa la Sucursal.');return;}
+    if(!c){alert('Por favor ingresa el Colaborador evaluado.');return;}
+    if(!t){alert('Por favor ingresa el TL / Supervisor.');return;}
+    if(!sel.length){alert('Selecciona al menos un pilar.');return;}
+    sD={};rM={};oM={};ci=0;
+    sel.forEach(function(id){sD[id]={};});
+    const ca=document.getElementById('fca').value.trim();
+    document.getElementById('cav').textContent=ini(c);
+    document.getElementById('cnam').textContent=c;
+    document.getElementById('crol').textContent=(ca||'Colaborador')+' \u2014 '+s;
+    rTabs();
+    rEval();
+    goTo('s-eval');
+  }catch(e){alert('Error: '+e.message);}
 };
 
 function rTabs(){
@@ -793,7 +810,32 @@ window.cambiarPin=async function(){
   }catch(e){err.textContent='Error al actualizar: '+e.message;}
 };
 
-buildPL();initAdmin();
+// Explicit window assignments to ensure mobile onclick works
+window.iniciar=iniciar;
+window.goTo=goTo;
+window.togP=function(id){const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
+window.jmp=function(i){ci=i;sObs();rEval();};
+window.sA=function(pid,k,v){sD[pid][k]=sD[pid][k]===v?'':v;rEval();autoRisk(pid);};
+window.navP=function(d){sObs();ci+=d;rEval();};
+window.guardar=guardar;
+window.doLogin=doLogin;
+window.doLogout=doLogout;
+window.loadHist=loadHist;
+window.filtH=filtH;
+window.showD=showD;
+window.delA=delA;
+window.loadUsers=loadUsers;
+window.delU=delU;
+window.crearU=crearU;
+window.cambiarPin=cambiarPin;
+window.limpiarPinForm=limpiarPinForm;
+window.pn=pn;
+window.pb=pb;
+window.pn2=pn2;
+window.pb2=pb2;
+
+buildPL();
+initAdmin();
 </script>
 </body>
 </html>
