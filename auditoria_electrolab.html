@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría Electrolab Medic</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--er:#E8181A;--erd:#B01214;--eg:#F5F5F5;--dark:#1A1A1A;--mid:#666;--brd:#E0E0E0;--wh:#fff;--ok:#1A6B2F;--okl:#E5F5EA;--wa:#7A5200;--wal:#FFF8E1;--no:#8B1A1A;--nol:#FDEAEA;--bl:#0D4A8A;--bll:#E3EDF8;--pu:#5A1F8A;--te:#0A5C5C;--br:#7A2E00;--brl:#FDE8D8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100vh;font-family:'Montserrat',sans-serif;background:var(--eg);color:var(--dark)}
+.app{width:100%;max-width:480px;margin:0 auto;background:var(--wh);min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;flex:1}.screen.active{display:flex}
+.topbar{padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tbt{font-size:14px;font-weight:700;color:#fff;flex:1}.tbs{font-size:11px;color:rgba(255,255,255,.8)}
+.tbb{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;padding:0}
+.body{padding:16px;flex:1;overflow-y:auto}
+.hero{background:var(--er);border-radius:12px;padding:20px 16px;margin-bottom:16px;color:#fff}
+.btn{display:block;width:100%;padding:13px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;border:none;font-family:'Montserrat',sans-serif}
+.br{background:var(--er);color:#fff;margin-top:8px}
+.bo{background:transparent;color:var(--er);border:1.5px solid var(--er);margin-top:8px}
+.bg2{background:var(--eg);color:var(--mid);border:1.5px solid var(--brd);margin-top:8px}
+.bd{background:transparent;color:var(--no);border:1px solid var(--no);margin-top:6px}
+.card{background:var(--wh);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.ct{font-size:11px;font-weight:700;color:var(--mid);letter-spacing:.08em;margin-bottom:10px}
+label{font-size:13px;color:var(--mid);display:block;margin-bottom:4px;margin-top:12px;font-weight:500}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;font-size:14px;font-family:'Montserrat',sans-serif;border:1px solid var(--brd);border-radius:7px;padding:10px 12px;background:#fff;color:var(--dark);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--er)}
+textarea{height:60px;resize:none}
+.req{color:var(--er)}
+.gl{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.1em;margin:16px 0 8px;padding-left:2px}
+.pch{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--brd);background:var(--wh);cursor:pointer;margin-bottom:8px;text-align:left;font-family:'Montserrat',sans-serif}
+.pch.sel{border-width:1.5px}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.pi{flex:1}.pn{font-size:13px;font-weight:600;color:var(--dark)}.pd{font-size:11px;color:var(--mid);margin-top:2px}
+.chk{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--brd);background:transparent;cursor:pointer;color:var(--mid);font-family:'Montserrat',sans-serif}
+.tab.done{color:var(--ok);border-color:var(--ok);background:var(--okl)}.tab.cur{color:#fff}
+.sh{font-size:11px;font-weight:700;padding:7px 10px;border-radius:7px;margin:12px 0 6px;color:#fff}
+.ir{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--eg)}.ir:last-child{border-bottom:none}
+.it{font-size:13px;color:var(--dark);flex:1;line-height:1.5}
+.tw{display:flex;gap:4px;flex-shrink:0;margin-top:1px}
+.tog{width:32px;height:27px;border-radius:6px;border:1px solid var(--brd);background:transparent;font-size:11px;cursor:pointer;color:var(--mid);font-weight:600;font-family:'Montserrat',sans-serif}
+.tog.si{background:var(--ok);border-color:var(--ok);color:#fff}.tog.no{background:var(--no);border-color:var(--no);color:#fff}.tog.na{background:var(--eg);color:var(--dark)}
+.rr{display:flex;gap:6px;margin-top:8px}
+.rb{flex:1;padding:8px 4px;border-radius:7px;border:1px solid var(--brd);background:transparent;font-size:11px;font-weight:600;cursor:pointer;color:var(--mid);font-family:'Montserrat',sans-serif}
+.rb.rv{background:var(--okl);border-color:var(--ok);color:var(--ok)}.rb.ra{background:var(--wal);border-color:var(--wa);color:var(--wa)}.rb.rr2{background:var(--nol);border-color:var(--no);color:var(--no)}
+.nb{display:flex;gap:8px;margin-top:4px}.nb .btn{margin-top:0}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bge{background:var(--okl);color:var(--ok)}.bgy{background:var(--wal);color:var(--wa)}.bgr{background:var(--nol);color:var(--no)}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--eg);font-size:13px}.sr:last-child{border-bottom:none}
+.sl{color:var(--mid)}.sv{font-weight:600;color:var(--dark);text-align:right;max-width:60%}
+.sb{height:5px;border-radius:3px;background:var(--eg);margin:6px 0 2px}.sf{height:100%;border-radius:3px}
+.empty{text-align:center;padding:36px 16px;color:var(--mid);font-size:13px}
+.s2{display:flex;gap:8px;margin-bottom:12px}.s2 input{flex:1}.s2 select{width:110px;flex-shrink:0}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.sc{background:var(--eg);border-radius:8px;padding:12px;text-align:center}
+.sn{font-size:22px;font-weight:700;color:var(--er)}.slb{font-size:11px;color:var(--mid);margin-top:2px}
+.dv{height:1px;background:var(--eg);margin:10px 0}
+.cb{background:var(--bll);border:1px solid var(--bl);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ca{width:36px;height:36px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.hi{padding:12px 0;border-bottom:1px solid var(--eg);cursor:pointer}.hi:last-child{border-bottom:none}
+.bn{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--brd);background:var(--wh);flex-shrink:0}.bn .btn{margin-top:0;flex:1}
+.rb-gr{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.ue{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--eg)}.ue:last-child{border-bottom:none}
+.pi2{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.pi2 input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:700;border-radius:10px;border:1.5px solid var(--brd);background:#fff;color:var(--dark)}
+.pi2 input:focus{border-color:var(--er);outline:none}
+.ld{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--mid);font-size:13px;gap:8px}
+.sp{width:18px;height:18px;border:2px solid var(--brd);border-top-color:var(--er);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;white-space:nowrap;transition:opacity .3s;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div id="s-login" class="screen active">
+  <div class="topbar" style="background:var(--er)">
+    <div style="flex:1"><span class="tbt">Auditor&#237;a Electrolab Medic</span><br><span class="tbs">Recursos Humanos</span></div>
+  </div>
+  <div class="body" style="display:flex;flex-direction:column;justify-content:center;min-height:70vh">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:64px;height:64px;border-radius:50%;background:#FDE8E8;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px">&#128274;</div>
+      <p style="font-size:18px;font-weight:700">Iniciar sesi&#243;n</p>
+      <p style="font-size:12px;color:var(--mid);margin-top:4px">Ingresa tu usuario y PIN de 4 d&#237;gitos</p>
+    </div>
+    <div class="card">
+      <label>Usuario</label>
+      <input type="text" id="lu" placeholder="Tu nombre de usuario" autocomplete="off">
+      <label style="margin-top:12px">PIN</label>
+      <div class="pi2">
+        <input type="password" maxlength="1" id="p0" oninput="pn(0)" onkeydown="pb(event,0)" inputmode="numeric">
+        <input type="password" maxlength="1" id="p1" oninput="pn(1)" onkeydown="pb(event,1)" inputmode="numeric">
+        <input type="password" maxlength="1" id="p2" oninput="pn(2)" onkeydown="pb(event,2)" inputmode="numeric">
+        <input type="password" maxlength="1" id="p3" oninput="pn(3)" onkeydown="pb(event,3)" inputmode="numeric">
+      </div>
+      <div id="lerr" style="color:var(--no);font-size:12px;text-align:center;min-height:16px;margin-bottom:4px"></div>
+      <button class="btn br" onclick="doLogin()" style="margin-top:4px">Entrar</button>
+    </div>
+    <p style="font-size:11px;color:var(--mid);text-align:center;margin-top:12px">Usuario inicial: <strong>Admin</strong> &#8212; PIN: <strong>0000</strong></p>
+  </div>
+</div>
+
+<div id="s-home" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <div style="flex:1"><span class="tbt" id="htit">Auditor&#237;a</span><br><span class="tbs" id="hsub"></span></div>
+    <button class="tbb" onclick="doLogout()" title="Cerrar sesi&#243;n">&#128274;</button>
+  </div>
+  <div class="body">
+    <div class="hero">
+      <p style="font-size:16px;font-weight:700;margin-bottom:2px" id="hwel">Bienvenido/a</p>
+      <p style="font-size:12px;opacity:.85" id="hrdesc"></p>
+    </div>
+    <button class="btn br" onclick="goTo('s-nueva')">+ Nueva auditor&#237;a</button>
+    <button class="btn bo" onclick="loadHist()">&#128203; Ver historial</button>
+    <div id="admbtn"></div>
+    <button class="btn bg2" onclick="goTo('s-pin')" style="margin-top:8px">&#128273; Cambiar mi PIN</button>
+    <div class="card" style="margin-top:14px"><p class="ct">&#218;LTIMAS 30 D&#205;AS</p><div id="hstats"><div class="ld"><div class="sp"></div>Cargando...</div></div></div>
+  </div>
+</div>
+
+<div id="s-admin" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-home')">&#8592;</button>
+    <span class="tbt">Gesti&#243;n de usuarios</span>
+  </div>
+  <div class="body">
+    <button class="btn br" onclick="goTo('s-nu')" style="margin-bottom:12px">&#128100;+ Agregar usuario</button>
+    <div id="ulist"><div class="ld"><div class="sp"></div>Cargando...</div></div>
+  </div>
+</div>
+
+<div id="s-nu" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-admin')">&#8592;</button>
+    <span class="tbt">Nuevo usuario</span>
+  </div>
+  <div class="body">
+    <div class="card">
+      <label>Nombre de usuario <span class="req">*</span></label>
+      <input type="text" id="nun" placeholder="Nombre completo">
+      <label>PIN de 4 d&#237;gitos <span class="req">*</span></label>
+      <input type="password" id="nup" placeholder="4 d&#237;gitos" maxlength="4" inputmode="numeric">
+      <label>Rol <span class="req">*</span></label>
+      <select id="nur" onchange="document.getElementById('nusw').style.display=this.value==='gl'?'block':'none'">
+        <option value="">Selecciona un rol</option>
+        <option value="gerente">Gerente RH (ve todo)</option>
+        <option value="analista">Analista RH (ve todas las sucursales)</option>
+        <option value="gl">Group Leader (solo su sucursal)</option>
+      </select>
+      <div id="nusw" style="display:none">
+        <label>Sucursal asignada <span class="req">*</span></label>
+        <input type="text" id="nus" placeholder="Nombre exacto de la sucursal">
+      </div>
+    </div>
+    <button class="btn br" onclick="crearU()">Crear usuario</button>
+    <button class="btn bg2" onclick="goTo('s-admin')">Cancelar</button>
+  </div>
+</div>
+
+<div id="s-nueva" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-home')">&#8592;</button>
+    <span class="tbt">Nueva auditor&#237;a</span>
+  </div>
+  <div class="body">
+    <div class="card">
+      <p class="ct">DATOS DE LA VISITA</p>
+      <label>Sucursal <span class="req">*</span></label><input type="text" id="fs" placeholder="Ej: Sucursal Centro">
+      <label>Colaborador evaluado <span class="req">*</span></label><input type="text" id="fc" placeholder="Nombre de quien se eval&#250;a">
+      <label>Cargo del colaborador</label><input type="text" id="fca" placeholder="Ej: Vendedor, TL...">
+      <label>TL / Supervisor <span class="req">*</span></label><input type="text" id="ft" placeholder="Nombre completo">
+      <label>Fecha <span class="req">*</span></label><input type="date" id="ff">
+    </div>
+    <p style="font-size:13px;font-weight:600;margin-bottom:4px">Pilares a evaluar <span class="req">*</span></p>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:10px">Selecciona uno o varios.</p>
+    <div class="gl">VENTAS</div><div id="plv"></div>
+    <div class="gl">RECURSOS HUMANOS</div><div id="plr"></div>
+    <button class="btn br" onclick="iniciar()" style="margin-top:10px">Iniciar auditor&#237;a</button>
+    <button class="btn bg2" onclick="goTo('s-home')">&#8962; Men&#250; principal</button>
+  </div>
+</div>
+
+<div id="s-eval" class="screen">
+  <div class="topbar" id="etb" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-nueva')">&#8592;</button>
+    <div style="flex:1"><span class="tbt" id="etit"></span><br><span class="tbs" id="eprog"></span></div>
+  </div>
+  <div class="body">
+    <div class="cb"><div class="ca" id="cav"></div><div><p style="font-size:13px;font-weight:700;color:var(--bl)" id="cnam"></p><p style="font-size:11px;color:var(--mid)" id="crol"></p></div></div>
+    <div class="tabs" id="ptabs"></div>
+    <div class="card" id="ebody" style="padding:12px"></div>
+    <div class="card" style="margin-top:4px">
+      <div id="risk-auto" style="border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;background:var(--eg)">
+        <span id="risk-icon" style="font-size:20px">&#8212;</span>
+        <div>
+          <p style="font-size:11px;font-weight:700;color:var(--mid)">NIVEL DE RIESGO AUTOM&#193;TICO</p>
+          <p style="font-size:13px;font-weight:600" id="risk-label">Completa los &#237;tems para ver el resultado</p>
+        </div>
+      </div>
+      <label>Observaciones</label>
+      <textarea id="eobs" placeholder="Describe situaciones concretas..."></textarea>
+    </div>
+    <div class="nb">
+      <button class="btn bo" id="bprev" onclick="navP(-1)" style="display:none">&#8592; Anterior</button>
+      <button class="btn br" id="bnext" onclick="navP(1)" style="flex:2">Siguiente &#8594;</button>
+    </div>
+    <button class="btn br" id="bsave" style="display:none;margin-top:8px" onclick="guardar()">&#128190; Guardar auditor&#237;a</button>
+  </div>
+  <div class="bn">
+    <button class="btn bg2" onclick="if(confirm('&#191;Salir?'))goTo('s-home')">&#8962; Men&#250;</button>
+    <button class="btn bo" onclick="goTo('s-nueva')" style="margin-top:0">+ Nueva</button>
+  </div>
+</div>
+
+<div id="s-hist" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-home')">&#8592;</button>
+    <span class="tbt">Historial</span>
+  </div>
+  <div class="body">
+    <div class="s2">
+      <input type="text" id="hq" placeholder="Buscar..." oninput="filtH()">
+      <select id="hf" onchange="filtH()"><option value="">Todos</option><option value="ventas">Ventas</option><option value="rh">RH</option></select>
+    </div>
+    <div id="hlist"><div class="ld"><div class="sp"></div>Cargando...</div></div>
+  </div>
+  <div class="bn">
+    <button class="btn bg2" onclick="goTo('s-home')" style="margin-top:0">&#8962; Men&#250;</button>
+    <button class="btn br" onclick="goTo('s-nueva')" style="margin-top:0">+ Nueva</button>
+  </div>
+</div>
+
+<div id="s-det" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-hist')">&#8592;</button>
+    <span class="tbt">Detalle</span>
+  </div>
+  <div class="body" id="detb"></div>
+  <div class="bn">
+    <button class="btn bg2" onclick="goTo('s-home')" style="margin-top:0">&#8962; Men&#250;</button>
+    <button class="btn br" onclick="goTo('s-nueva')" style="margin-top:0">+ Nueva</button>
+  </div>
+</div>
+
+<div id="s-resumen" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <div style="flex:1">
+      <span class="tbt">&#127919; Resultado de la auditor&#237;a</span>
+      <span class="tbs" id="res-sub"></span>
+    </div>
+  </div>
+  <div class="body" id="resb"></div>
+  <div class="bn">
+    <button class="btn bg2" onclick="goTo('s-home')" style="margin-top:0">&#8962; Men&#250;</button>
+    <button class="btn br" onclick="goTo('s-hist')" style="margin-top:0">&#128203; Historial</button>
+  </div>
+</div>
+
+</div>
+
+<div id="s-pin" class="screen">
+  <div class="topbar" style="background:var(--er)">
+    <button class="tbb" onclick="goTo('s-home')">&#8592;</button>
+    <span class="tbt">Cambiar mi PIN</span>
+  </div>
+  <div class="body" style="display:flex;flex-direction:column;justify-content:center;min-height:60vh">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:56px;height:56px;border-radius:50%;background:#FDE8E8;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">&#128273;</div>
+      <p style="font-size:16px;font-weight:700" id="pin-user-label">Cambia tu PIN</p>
+      <p style="font-size:12px;color:var(--mid);margin-top:4px">Ingresa tu PIN actual y luego el nuevo</p>
+    </div>
+    <div class="card">
+      <label>PIN actual</label>
+      <div class="pi2">
+        <input type="password" maxlength="1" id="pc0" oninput="pn2(0,'pc')" onkeydown="pb2(event,0,'pc')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pc1" oninput="pn2(1,'pc')" onkeydown="pb2(event,1,'pc')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pc2" oninput="pn2(2,'pc')" onkeydown="pb2(event,2,'pc')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pc3" oninput="pn2(3,'pc')" onkeydown="pb2(event,3,'pc')" inputmode="numeric">
+      </div>
+      <label style="margin-top:14px">Nuevo PIN</label>
+      <div class="pi2">
+        <input type="password" maxlength="1" id="pn0" oninput="pn2(0,'pn')" onkeydown="pb2(event,0,'pn')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pn1" oninput="pn2(1,'pn')" onkeydown="pb2(event,1,'pn')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pn2" oninput="pn2(2,'pn')" onkeydown="pb2(event,2,'pn')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pn3" oninput="pn2(3,'pn')" onkeydown="pb2(event,3,'pn')" inputmode="numeric">
+      </div>
+      <label style="margin-top:14px">Confirmar nuevo PIN</label>
+      <div class="pi2">
+        <input type="password" maxlength="1" id="pp0" oninput="pn2(0,'pp')" onkeydown="pb2(event,0,'pp')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pp1" oninput="pn2(1,'pp')" onkeydown="pb2(event,1,'pp')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pp2" oninput="pn2(2,'pp')" onkeydown="pb2(event,2,'pp')" inputmode="numeric">
+        <input type="password" maxlength="1" id="pp3" oninput="pn2(3,'pp')" onkeydown="pb2(event,3,'pp')" inputmode="numeric">
+      </div>
+      <div id="pin-err" style="color:var(--no);font-size:12px;text-align:center;min-height:16px;margin-top:8px"></div>
+      <button class="btn br" onclick="cambiarPin()" style="margin-top:8px">Actualizar PIN</button>
+      <button class="btn bg2" onclick="limpiarPinForm();goTo('s-home')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getFirestore,collection,addDoc,getDocs,doc,deleteDoc,query,where,orderBy,setDoc,getDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const cfg={apiKey:"AIzaSyAIOeFweIN4wTX-gAOJjCXcp6NlxHP10oE",authDomain:"buscando-la-excelencia.firebaseapp.com",projectId:"buscando-la-excelencia",storageBucket:"buscando-la-excelencia.firebasestorage.app",messagingSenderId:"728593085377",appId:"1:728593085377:web:e13940e960d9000c9fb540"};
+const fb=initializeApp(cfg);
+const db=getFirestore(fb);
+
+const PL=[
+  {id:'p1',g:'ventas',name:'Gesti\u00f3n con el cliente',color:'#0D4A8A',light:'#E3EDF8',secs:[{t:'Bienvenida y diagn\u00f3stico',items:['Saluda al cliente con contacto visual y actitud proactiva','Hace preguntas abiertas para identificar la necesidad real','Escucha activamente; confirma lo que entendi\u00f3 antes de proponer']},{t:'Demostraci\u00f3n y argumentaci\u00f3n',items:['Conecta los beneficios del producto con la necesidad expresada','Invita al cliente a interactuar con el producto','Maneja objeciones con seguridad y sin ponerse a la defensiva']},{t:'Cierre y venta complementaria',items:['Propone el cierre de forma directa y ofrece opciones de pago','Ofrece al menos un producto complementario de forma natural','Acompa\u00f1a al cliente hasta el cierre; hace despedida genuina']}]},
+  {id:'p2',g:'ventas',name:'Procesos internos',color:'#1A6B2F',light:'#E5F5EA',secs:[{t:'Presentaci\u00f3n y est\u00e1ndares',items:['Uniforme completo, limpio y gafete visible en la jornada','\u00c1rea de trabajo ordenada y exhibici\u00f3n correcta de productos','Conoce las promociones vigentes del d\u00eda antes de atender']},{t:'Trabajo en equipo',items:['Colabora con compa\u00f1eros en atenci\u00f3n simult\u00e1nea sin indicaci\u00f3n','Acepta indicaciones y retroalimentaci\u00f3n sin actitud defensiva','Muestra iniciativa para resolver situaciones sin escalar']},{t:'Cumplimiento de pol\u00edticas',items:['Aplica correctamente el proceso de caja: cobro y opciones de pago','Sigue los protocolos de devoluciones y situaciones especiales','Registra su jornada y compromisos seg\u00fan los procedimientos']}]},
+  {id:'p3',g:'ventas',name:'Entrenamiento de productos',color:'#5A1F8A',light:'#F0E8FB',secs:[{t:'Conocimiento t\u00e9cnico',items:['Explica diferencias entre al menos 3 productos del portafolio','Conoce los argumentos clave de los productos en promoci\u00f3n','Responde preguntas t\u00e9cnicas con seguridad y precisi\u00f3n']},{t:'Aplicaci\u00f3n en piso',items:['Aplica en la atenci\u00f3n lo aprendido en capacitaciones recientes','Adapta el lenguaje t\u00e9cnico al nivel del cliente','Compara productos de forma objetiva para orientar la decisi\u00f3n']},{t:'Desarrollo y autogesti\u00f3n',items:['Conoce su meta del per\u00edodo y puede indicar su avance','Ha completado los m\u00f3dulos de capacitaci\u00f3n del per\u00edodo actual','Identifica un \u00e1rea de mejora y menciona una acci\u00f3n concreta']}]},
+  {id:'r1',g:'rh',name:'Trabajo en equipo',color:'#0A5C5C',light:'#E0F4F4',secs:[{t:'Din\u00e1mica y cohesi\u00f3n',items:['Los colaboradores se apoyan en momentos de alta demanda sin indicaci\u00f3n','Se observa comunicaci\u00f3n fluida y respetuosa en el equipo','No hay subgrupos excluyentes ni colaboradores aislados']},{t:'Liderazgo del responsable',items:['El l\u00edder distribuye tareas de forma equitativa','Da retroalimentaci\u00f3n constructiva: en privado y con hechos','Modela los comportamientos que exige: puntualidad y actitud']},{t:'Comunicaci\u00f3n interna',items:['El equipo conoce metas y prioridades antes de abrir','Existe un espacio donde el equipo se alinea y puede expresarse','Los acuerdos se registran y se da seguimiento']}]},
+  {id:'r2',g:'rh',name:'Moral y \u00e9tica',color:'#1A6B2F',light:'#E5F5EA',secs:[{t:'Trato justo e imparcialidad',items:['Reconocimientos y llamadas de atenci\u00f3n se aplican con igualdad','No hay preferencias injustificadas en turnos, descansos o tareas','El l\u00edder no hace comentarios que favorezcan o perjudiquen a alguien']},{t:'Conflicto de inter\u00e9s',items:['No hay relaciones no declaradas a RH entre l\u00edder y colaboradores','Las relaciones personales no generan grupos de poder','Las decisiones de promoci\u00f3n no est\u00e1n influenciadas por v\u00ednculos']},{t:'Integridad',items:['No hay se\u00f1ales de encubrimiento de incumplimientos','Los procesos de caja e inventario siguen los controles establecidos','Los colaboradores conocen el canal de denuncia y no temen usarlo']}]},
+  {id:'r3',g:'rh',name:'Seguridad ocupacional',color:'#7A2E00',light:'#FDE8D8',secs:[{t:'Condiciones f\u00edsicas',items:['Las \u00e1reas de tr\u00e1nsito est\u00e1n libres de obst\u00e1culos e iluminadas','No hay cables sueltos, superficies en mal estado o riesgos de ca\u00edda','Extintores y se\u00f1alizaci\u00f3n de emergencia est\u00e1n visibles y accesibles']},{t:'Protocolos y emergencias',items:['El equipo conoce rutas de evacuaci\u00f3n y punto de reuni\u00f3n','Existe botiqu\u00edn visible, completo y con vencimiento vigente','Al menos un colaborador est\u00e1 capacitado en primeros auxilios']},{t:'Bienestar f\u00edsico',items:['Los colaboradores tienen acceso a agua, descanso e higiene','No se observa esfuerzo f\u00edsico inadecuado sin equipo correcto','El colaborador sabe a qui\u00e9n reportar accidentes o riesgos']}]}
+];
+
+let CU=null,sel=[],sD={},rM={},oM={},ci=0,aAll=[];
+
+function toast(m,ok){const t=document.createElement('div');t.className='toast';t.textContent=m;t.style.background=ok===false?'#8B1A1A':'#1A3A1A';t.style.color='#fff';document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2500);}
+function ini(n){if(!n)return'?';const p=n.trim().split(' ').filter(x=>x.length>0);return p.length===1?p[0][0].toUpperCase():(p[0][0]+p[p.length-1][0]).toUpperCase();}
+function lbl(si,tot){const r=tot>0?si/tot:0;if(r>=0.89)return{t:'Excelente',c:'bge'};if(r>=0.67)return{t:'Satisfactorio',c:'bgy'};if(r>=0.45)return{t:'En desarrollo',c:'bgy'};return{t:'Cr\u00edtico',c:'bgr'};}
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+window.goTo=goTo;
+
+window.pn=i=>{if(document.getElementById('p'+i).value&&i<3)document.getElementById('p'+(i+1)).focus();};
+window.pb=(e,i)=>{if(e.key==='Backspace'&&!document.getElementById('p'+i).value&&i>0)document.getElementById('p'+(i-1)).focus();};
+
+async function initAdmin(){
+  try{const r=doc(db,'usuarios','admin');const s=await getDoc(r);if(!s.exists())await setDoc(r,{nombre:'Admin',pin:'0000',rol:'gerente',sucursal:''});}catch(e){console.log('initAdmin:',e.message);}
+}
+
+window.doLogin=async function(){
+  const nombre=document.getElementById('lu').value.trim();
+  const pin=[0,1,2,3].map(i=>document.getElementById('p'+i).value).join('');
+  const err=document.getElementById('lerr');err.textContent='';
+  if(!nombre||pin.length<4){err.textContent='Completa usuario y PIN.';return;}
+  err.textContent='Verificando...';
+  try{
+    const q=query(collection(db,'usuarios'),where('nombre','==',nombre),where('pin','==',pin));
+    const snap=await getDocs(q);
+    if(snap.empty){err.textContent='Usuario o PIN incorrecto.';return;}
+    CU=snap.docs[0].data();CU.id=snap.docs[0].id;
+    setupHome();await loadStats();goTo('s-home');
+  }catch(e){err.textContent='Error de conexi\u00f3n: '+e.message;}
+};
+
+window.doLogout=function(){if(confirm('\u00bfCerrar sesi\u00f3n?')){CU=null;[0,1,2,3].forEach(i=>document.getElementById('p'+i).value='');document.getElementById('lu').value='';document.getElementById('lerr').textContent='';goTo('s-login');}};
+
+function setupHome(){
+  const rl={gerente:'Gerente RH',analista:'Analista RH',gl:'Group Leader'};
+  document.getElementById('htit').textContent='Hola, '+CU.nombre;
+  document.getElementById('hsub').textContent=rl[CU.rol]||CU.rol;
+  document.getElementById('hwel').textContent='Bienvenido/a, '+CU.nombre;
+  const ds={gerente:'Acceso completo a todas las auditor\u00edas.',analista:'Ves auditor\u00edas de todas las sucursales.',gl:'Ves las auditor\u00edas de tu sucursal.'};
+  document.getElementById('hrdesc').textContent=ds[CU.rol]||'';
+  document.getElementById('admbtn').innerHTML=CU.rol==='gerente'?'<button class="btn bg2" onclick="loadUsers()" style="margin-top:8px">&#128100; Gestionar usuarios</button>':'';
+  document.getElementById('ff').value=new Date().toISOString().slice(0,10);
+  const pul=document.getElementById('pin-user-label');
+  if(pul)pul.textContent='Cambiar PIN de '+CU.nombre;
+}
+
+async function loadStats(){
+  const el=document.getElementById('hstats');el.innerHTML='<div class="ld"><div class="sp"></div>Cargando...</div>';
+  try{
+    const aud=await fetchAud();
+    const now=new Date(),d30=new Date(now-30*24*3600*1000);
+    const rec=aud.filter(a=>new Date(a.fecha)>=d30);
+    if(!rec.length){el.innerHTML='<p style="font-size:13px;color:var(--mid);text-align:center;padding:8px 0">Sin auditor\u00edas en los \u00faltimos 30 d\u00edas.</p>';return;}
+    let bv=0,br=0,ro=0;
+    rec.forEach(a=>{const gs={};a.pils.forEach(p=>{const pl=PL.find(x=>x.id===p.id);if(pl)gs[pl.g]=1;if(p.risk==='r')ro++;});if(gs.ventas)bv++;if(gs.rh)br++;});
+    el.innerHTML=`<div class="sg"><div class="sc"><div class="sn">${rec.length}</div><div class="slb">Total</div></div><div class="sc"><div class="sn" style="color:var(--ok)">${bv}</div><div class="slb">Ventas</div></div><div class="sc"><div class="sn" style="color:var(--bl)">${br}</div><div class="slb">RH</div></div><div class="sc"><div class="sn" style="color:var(--no)">${ro}</div><div class="slb">Alertas rojas</div></div></div>`;
+  }catch(e){el.innerHTML=`<p style="font-size:12px;color:var(--no);padding:8px">Error: ${e.message}</p>`;}
+}
+
+async function fetchAud(){
+  let q;
+  if(CU.rol==='gerente'||CU.rol==='analista'){q=query(collection(db,'auditorias'),orderBy('fecha','desc'));}
+  else{q=query(collection(db,'auditorias'),where('suc','==',CU.sucursal),orderBy('fecha','desc'));}
+  const s=await getDocs(q);return s.docs.map(d=>({id:d.id,...d.data()}));
+}
+
+window.loadHist=async function(){
+  goTo('s-hist');
+  document.getElementById('hlist').innerHTML='<div class="ld"><div class="sp"></div>Cargando...</div>';
+  try{aAll=await fetchAud();filtH();}
+  catch(e){document.getElementById('hlist').innerHTML=`<p style="color:var(--no);font-size:12px;padding:16px">Error: ${e.message}</p>`;}
+};
+window.filtH=function(){
+  const q=document.getElementById('hq').value.toLowerCase();
+  const gf=document.getElementById('hf').value;
+  const list=aAll.filter(a=>{
+    if(q&&!(a.suc.toLowerCase().includes(q)||a.colab.toLowerCase().includes(q)||(a.rh||'').toLowerCase().includes(q)))return false;
+    if(gf&&!a.pils.some(p=>{const pl=PL.find(x=>x.id===p.id);return pl&&pl.g===gf;}))return false;
+    return true;
+  });
+  const el=document.getElementById('hlist');
+  if(!list.length){el.innerHTML='<div class="card"><p class="empty">Sin auditor\u00edas que coincidan.</p></div>';return;}
+  let h='<div class="card">';
+  list.forEach(a=>{
+    let ts=0,ti=0;a.pils.forEach(p=>{ts+=p.si;ti+=p.tot;});
+    const lb=lbl(ts,ti);
+    h+=`<div class="hi" onclick="showD('${a.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <span style="font-size:14px;font-weight:700">${a.colab}</span>
+        <span class="badge ${lb.c}">${ts}/${ti} ${lb.t}</span>
+      </div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:4px">${a.cargo?a.cargo+' &middot; ':''}<strong>${a.suc}</strong></div>
+      <div style="font-size:11px;color:var(--mid);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px">
+        <span>TL: ${a.tl}</span><span>RH: ${a.rh||''}</span><span>${a.fecha}</span>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        ${a.pils.map(p=>{const pl=PL.find(x=>x.id===p.id);if(!pl)return'';return`<span class="badge" style="background:${pl.light};color:${pl.color}">${pl.name}</span>`;}).join('')}
+      </div>
+    </div>`;
+  });
+  h+='</div>';el.innerHTML=h;
+};
+
+window.showD=function(id){
+  const a=aAll.find(x=>x.id===id);if(!a)return;
+  const rT={v:'\uD83D\uDFE2 Verde',a:'\uD83D\uDFE1 Amarillo',r:'\uD83D\uDD34 Rojo','':'No registrado'};
+  let h=`<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div style="width:44px;height:44px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0">${ini(a.colab)}</div><div><p style="font-size:16px;font-weight:700">${a.colab}</p>${a.cargo?`<p style="font-size:12px;color:var(--mid)">${a.cargo}</p>`:''}</div></div><div class="sr"><span class="sl">Sucursal</span><span class="sv">${a.suc}</span></div><div class="sr"><span class="sl">TL</span><span class="sv">${a.tl}</span></div><div class="sr"><span class="sl">Analista RH</span><span class="sv">${a.rh||''}</span></div><div class="sr"><span class="sl">Fecha</span><span class="sv">${a.fecha}</span></div></div>`;
+  a.pils.forEach(pd=>{
+    const p=PL.find(x=>x.id===pd.id);if(!p)return;
+    const pct=pd.tot>0?Math.round(pd.si/pd.tot*100):0,lb=lbl(pd.si,pd.tot);
+    h+=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><p style="font-size:14px;font-weight:700;color:${p.color}">${p.name}</p><span class="badge ${lb.c}">${pd.si}/${pd.tot}</span></div><div class="sb"><div class="sf" style="width:${pct}%;background:${p.color}"></div></div><p style="font-size:11px;color:var(--mid);margin-bottom:10px">${pct}% &mdash; ${lb.t}</p>`;
+    let n=0;
+    p.secs.forEach((sec,si)=>{
+      h+=`<div class="sh" style="background:${p.color}">${sec.t}</div>`;
+      sec.items.forEach((item,ii)=>{
+        const ans=(pd.answers||{})[si+'-'+ii]||'';
+        const dot=ans==='si'?`<span style="color:var(--ok);font-weight:600">S&iacute;</span>`:ans==='no'?`<span style="color:var(--no);font-weight:600">No</span>`:`<span style="color:var(--mid)">N/A</span>`;
+        n++;h+=`<div class="ir"><span class="it">${n}. ${item}</span><div style="flex-shrink:0;margin-left:8px;font-size:12px">${dot}</div></div>`;
+      });
+    });
+    h+=`<div class="dv"></div><div style="font-size:12px;color:var(--mid)">Riesgo: <span style="font-weight:600">${rT[pd.risk]||'No registrado'}</span></div>`;
+    if(pd.obs)h+=`<div style="margin-top:6px;font-size:12px;color:var(--mid)">Obs: <span style="color:var(--dark)">${pd.obs}</span></div>`;
+    h+='</div>';
+  });
+  if(CU.rol==='gerente')h+=`<button class="btn bd" onclick="delA('${a.id}')">&#128465; Eliminar auditor&iacute;a</button>`;
+  document.getElementById('detb').innerHTML=h;goTo('s-det');
+};
+
+window.delA=async function(id){
+  if(!confirm('\u00bfEliminar esta auditor\u00eda?'))return;
+  try{await deleteDoc(doc(db,'auditorias',id));toast('\u2714 Eliminada',true);aAll=aAll.filter(a=>a.id!==id);goTo('s-hist');window.filtH();}
+  catch(e){toast('Error al eliminar',false);}
+};
+
+window.loadUsers=async function(){
+  goTo('s-admin');
+  document.getElementById('ulist').innerHTML='<div class="ld"><div class="sp"></div>Cargando...</div>';
+  try{
+    const snap=await getDocs(collection(db,'usuarios'));
+    const users=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!users.length){document.getElementById('ulist').innerHTML='<p class="empty">Sin usuarios.</p>';return;}
+    const rl={gerente:'Gerente RH',analista:'Analista RH',gl:'Group Leader'};
+    const rc={gerente:'background:#FDE8E8;color:#8B1A1A',analista:'background:#E3EDF8;color:#0D4A8A',gl:'background:#E5F5EA;color:#1A6B2F'};
+    let h='<div class="card">';
+    users.forEach(u=>{h+=`<div class="ue"><div><p style="font-size:13px;font-weight:600">${u.nombre}</p>${u.sucursal?`<p style="font-size:11px;color:var(--mid)">${u.sucursal}</p>`:''}</div><div style="display:flex;align-items:center;gap:8px"><span class="rb-gr" style="${rc[u.rol]||'background:#eee;color:#666'}">${rl[u.rol]||u.rol}</span>${u.id!=='admin'?`<button onclick="delU('${u.id}')" style="background:transparent;border:none;cursor:pointer;color:var(--no);font-size:16px">&times;</button>`:''}</div></div>`;});
+    h+='</div>';document.getElementById('ulist').innerHTML=h;
+  }catch(e){document.getElementById('ulist').innerHTML=`<p style="color:var(--no);font-size:12px;padding:16px">Error: ${e.message}</p>`;}
+};
+
+window.delU=async function(id){
+  if(!confirm('\u00bfEliminar usuario?'))return;
+  try{await deleteDoc(doc(db,'usuarios',id));toast('\u2714 Eliminado',true);window.loadUsers();}
+  catch(e){toast('Error',false);}
+};
+
+window.crearU=async function(){
+  const n=document.getElementById('nun').value.trim();
+  const p=document.getElementById('nup').value.trim();
+  const r=document.getElementById('nur').value;
+  const s=document.getElementById('nus').value.trim();
+  if(!n||p.length!==4||!r){alert('Completa todos los campos obligatorios.');return;}
+  if(r==='gl'&&!s){alert('Ingresa la sucursal del Group Leader.');return;}
+  try{
+    await addDoc(collection(db,'usuarios'),{nombre:n,pin:p,rol:r,sucursal:s});
+    toast('\u2714 Usuario creado',true);
+    document.getElementById('nun').value='';document.getElementById('nup').value='';
+    document.getElementById('nur').value='';document.getElementById('nus').value='';
+    document.getElementById('nusw').style.display='none';
+    goTo('s-admin');window.loadUsers();
+  }catch(e){toast('Error: '+e.message,false);}
+};
+
+function buildPL(){
+  ['ventas','rh'].forEach(g=>{
+    let h='';
+    PL.filter(p=>p.g===g).forEach(p=>{
+      const on=sel.includes(p.id);
+      h+=`<button class="pch${on?' sel':''}" style="${on?'border-color:'+p.color+';':''}" onclick="togP('${p.id}')"><span class="pdot" style="background:${p.color}"></span><span class="pi"><span class="pn">${p.name}</span><span class="pd">${p.secs.map(s=>s.t).join(' &middot; ')}</span></span><span class="chk" style="${on?'background:'+p.color+';border-color:'+p.color+';color:#fff':''}">${on?'&#10003;':''}</span></button>`;
+    });
+    document.getElementById('pl'+(g==='ventas'?'v':'r')).innerHTML=h;
+  });
+}
+window.togP=id=>{const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
+
+window.iniciar=function(){
+  const s=document.getElementById('fs').value.trim(),c=document.getElementById('fc').value.trim(),t=document.getElementById('ft').value.trim();
+  if(!s||!c||!t){alert('Completa los campos obligatorios.');return;}
+  if(!sel.length){alert('Selecciona al menos un pilar.');return;}
+  sD={};rM={};oM={};ci=0;sel.forEach(id=>{sD[id]={};});
+  const ca=document.getElementById('fca').value.trim();
+  document.getElementById('cav').textContent=ini(c);
+  document.getElementById('cnam').textContent=c;
+  document.getElementById('crol').textContent=(ca||'Colaborador')+' \u2014 '+s;
+  rTabs();rEval();goTo('s-eval');
+};
+
+function rTabs(){
+  document.getElementById('ptabs').innerHTML=sel.map((id,i)=>{
+    const p=PL.find(x=>x.id===id),done=Object.keys(sD[id]).length>0,cur=i===ci;
+    return`<button class="tab${done?' done':''}${cur?' cur':''}" style="${cur?'background:'+p.color+';border-color:'+p.color+';':''}" onclick="jmp(${i})">${p.name}</button>`;
+  }).join('');
+}
+window.jmp=i=>{ci=i;sObs();rEval();};
+
+function rEval(){
+  const pid=sel[ci],p=PL.find(x=>x.id===pid);
+  document.getElementById('etb').style.background=p.color;
+  document.getElementById('etit').textContent=p.name;
+  let tot=0,ans=Object.keys(sD[pid]).length;p.secs.forEach(s=>{tot+=s.items.length;});
+  document.getElementById('eprog').textContent=ans+'/'+tot+' respondidos';
+  let h='',n=0;
+  p.secs.forEach((sec,si)=>{
+    h+=`<div class="sh" style="background:${p.color}">${sec.t}</div>`;
+    sec.items.forEach((item,ii)=>{
+      const k=si+'-'+ii,v=sD[pid][k]||'';n++;
+      h+=`<div class="ir"><span class="it">${n}. ${item}</span><div class="tw"><button class="tog${v==='si'?' si':''}" onclick="sA('${pid}','${k}','si')">S&iacute;</button><button class="tog${v==='no'?' no':''}" onclick="sA('${pid}','${k}','no')">No</button><button class="tog${v==='na'?' na':''}" onclick="sA('${pid}','${k}','na')">N/A</button></div></div>`;
+    });
+  });
+  document.getElementById('ebody').innerHTML=h;
+  const risk=rM[pid]||'';
+  ['v','a','r'].forEach(x=>{
+    const cls='rb'+(risk===x?(' r'+(x==='r'?'r2':x)):'');
+    document.getElementById('r-'+x).className=cls;
+  });
+  document.getElementById('eobs').value=oM[pid]||'';
+  // Reset risk display if no answers yet, else show current
+  const box=document.getElementById('risk-auto');
+  if(box){
+    if(Object.keys(sD[pid]).length===0){box.style.background='var(--eg)';document.getElementById('risk-icon').textContent='\u2014';document.getElementById('risk-label').textContent='Completa los \u00edtems para ver el resultado';document.getElementById('risk-label').style.color='var(--mid)';}
+    else{autoRisk(pid);}
+  }
+  const last=ci===sel.length-1;
+  document.getElementById('bprev').style.display=ci===0?'none':'block';
+  document.getElementById('bnext').style.display=last?'none':'block';
+  document.getElementById('bsave').style.display=last?'block':'none';
+  rTabs();
+}
+
+window.sA=(pid,k,v)=>{sD[pid][k]=sD[pid][k]===v?'':v;rEval();autoRisk(pid);};
+
+function autoRisk(pid){
+  const sc=calcSc(pid);
+  const pct=sc.tot>0?sc.si/sc.tot:0;
+  let risk,icon,label,bg,color;
+  if(pct>=0.89){risk='v';icon='\uD83D\uDFE2';label='Verde \u2014 Sin riesgo ('+Math.round(pct*100)+'%)';bg='#E5F5EA';color='#1A6B2F';}
+  else if(pct>=0.67){risk='a';icon='\uD83D\uDFE1';label='Amarillo \u2014 Riesgo moderado ('+Math.round(pct*100)+'%)';bg='#FFF8E1';color='#7A5200';}
+  else{risk='r';icon='\uD83D\uDD34';label='Rojo \u2014 Riesgo cr\u00edtico ('+Math.round(pct*100)+'%)';bg='#FDEAEA';color='#8B1A1A';}
+  rM[pid]=risk;
+  const box=document.getElementById('risk-auto');
+  if(box){box.style.background=bg;document.getElementById('risk-icon').textContent=icon;document.getElementById('risk-label').textContent=label;document.getElementById('risk-label').style.color=color;}
+}
+function sObs(){if(sel[ci])oM[sel[ci]]=document.getElementById('eobs').value.trim();}
+window.navP=d=>{sObs();ci+=d;rEval();};
+
+function calcSc(pid){const p=PL.find(x=>x.id===pid);let tot=0,si=0;p.secs.forEach((s,si_)=>s.items.forEach((_,ii)=>{tot++;if((sD[pid]||{})[si_+'-'+ii]==='si')si++;}));return{si,tot};}
+
+// Plan de acción sugerido por ítem
+const ACCIONES={
+  // Gestión con el cliente
+  'p1-0-0':'Practicar el saludo de bienvenida en role-play con el TL esta semana.',
+  'p1-0-1':'Trabajar con el colaborador en técnicas de preguntas abiertas: quién, qué, cómo, para qué.',
+  'p1-0-2':'Ejercitar la técnica de escucha activa y parafraseo en las próximas 3 atenciones.',
+  'p1-1-0':'Repasar los argumentos de valor de los 5 productos principales con el TL.',
+  'p1-1-1':'Incluir demostración práctica en el próximo role-play de ventas.',
+  'p1-1-2':'Practicar respuestas a las 3 objeciones más frecuentes de clientes.',
+  'p1-2-0':'El TL debe acompañar al colaborador en 2 cierres esta semana y dar feedback inmediato.',
+  'p1-2-1':'Entrenar al colaborador en identificar el momento correcto para el cross-sell.',
+  'p1-2-2':'Establecer el protocolo de despedida como hábito: acompañar al cliente y mencionar próximas promociones.',
+  // Procesos internos
+  'p2-0-0':'Recordatorio de estándar de presentación personal. Revisión diaria al inicio del turno.',
+  'p2-0-1':'Asignar al colaborador responsabilidad de exhibición de su zona esta semana.',
+  'p2-0-2':'Incluir revisión de promociones vigentes en el briefing de apertura.',
+  'p2-1-0':'Reforzar cultura de apoyo en equipo. El TL debe modelar la colaboración espontánea.',
+  'p2-1-1':'Conversación individual sobre actitud ante el feedback. Acuerdo de mejora documentado.',
+  'p2-1-2':'Asignar al colaborador una situación de resolución autónoma supervisada esta semana.',
+  'p2-2-0':'Repaso del proceso de caja con el TL. Verificación de manejo correcto en próximas 5 transacciones.',
+  'p2-2-1':'Revisión del protocolo de devoluciones. Role-play de situación especial.',
+  'p2-2-2':'Verificar que el colaborador registre su jornada correctamente durante 5 días consecutivos.',
+  // Entrenamiento de productos
+  'p3-0-0':'Asignar estudio de ficha técnica de 3 productos clave. Evaluación oral en 5 días.',
+  'p3-0-1':'Repaso de argumentario de ventas de los productos en promoción actual.',
+  'p3-0-2':'Sesión de Q&A técnico con el TL o especialista de producto esta semana.',
+  'p3-1-0':'El TL debe verificar aplicación de lo aprendido en la próxima visita de seguimiento.',
+  'p3-1-1':'Práctica de adaptación de lenguaje técnico con role-play: cliente experto vs cliente nuevo.',
+  'p3-1-2':'Ejercicio de comparación objetiva: el colaborador presenta 2 productos al TL argumentando pros y contras.',
+  'p3-2-0':'Reunión 1:1 para revisar meta, avance y plan para cerrar el gap del período.',
+  'p3-2-1':'Verificar módulos pendientes y establecer fecha compromiso de completarlos.',
+  'p3-2-2':'Sesión de coaching: identificar el área de mejora y construir un plan de acción de 2 semanas.',
+  // RH - Trabajo en equipo
+  'r1-0-0':'El TL debe modelar el apoyo espontáneo y reconocerlo cuando ocurra en el equipo.',
+  'r1-0-1':'Observación de dinámica en horas pico. Conversación grupal sobre comunicación respetuosa.',
+  'r1-0-2':'El TL debe revisar la dinámica social del equipo e identificar si hay algún colaborador excluido.',
+  'r1-1-0':'Conversación directa con el TL sobre asignación equitativa de tareas y turnos.',
+  'r1-1-1':'Capacitación al TL en técnicas de feedback constructivo y conversaciones privadas.',
+  'r1-1-2':'El TL debe ser observado en su próxima interacción con el equipo. Feedback posterior.',
+  'r1-2-0':'Establecer un briefing diario de 5 minutos al inicio del turno con todo el equipo.',
+  'r1-2-1':'Implementar un espacio semanal de 10 minutos para que el equipo exprese inquietudes.',
+  'r1-2-2':'Crear formato simple de registro de acuerdos de reunión y seguimiento.',
+  // RH - Moral y ética
+  'r2-0-0':'Conversación directa con el TL sobre criterios de aplicación igualitaria de políticas.',
+  'r2-0-1':'Revisar distribución de turnos y descansos del último mes. Comparar entre colaboradores.',
+  'r2-0-2':'El TL debe evitar comentarios comparativos en público. Acuerdo documentado.',
+  'r2-1-0':'Solicitar declaración formal de vínculos al líder y verificar en expediente.',
+  'r2-1-1':'Observar dinámica de grupos en próxima visita. Entrevista individual confidencial si persiste.',
+  'r2-1-2':'Revisión de últimas decisiones de promoción o beneficios con el líder. Documentar criterios.',
+  'r2-2-0':'Investigación discreta sobre situación de encubrimiento. Entrevistas individuales.',
+  'r2-2-1':'Auditoría de caja o inventario con el área de operaciones. Documentar hallazgos.',
+  'r2-2-2':'Recordatorio del canal de denuncia a todo el equipo. Garantizar confidencialidad.',
+  // RH - Seguridad ocupacional
+  'r3-0-0':'Limpieza y reorganización inmediata de áreas de tránsito. Responsable: TL.',
+  'r3-0-1':'Reporte inmediato a mantenimiento. Seguimiento en 48 horas.',
+  'r3-0-2':'Verificar extintores con proveedor. Reponer señalización faltante esta semana.',
+  'r3-1-0':'Realizar simulacro de evacuación con el equipo en los próximos 15 días.',
+  'r3-1-1':'Reabastecer botiquín y registrar fecha de vencimiento de todos los insumos.',
+  'r3-1-2':'Identificar y capacitar a un colaborador por turno en primeros auxilios básicos.',
+  'r3-2-0':'Verificar que el área de descanso, agua y sanitarios estén disponibles y en condiciones.',
+  'r3-2-1':'Capacitación en técnicas de manejo de carga. Recordatorio en próxima reunión de equipo.',
+  'r3-2-2':'Comunicar ruta de reporte de accidentes a todo el equipo. Publicar en área visible.'
+};
+
+function buildResumen(auditoria){
+  const colab=auditoria.colab,suc=auditoria.suc,fecha=auditoria.fecha;
+  document.getElementById('res-sub').textContent=colab+' \u2014 '+suc+' \u2014 '+fecha;
+
+  // Puntaje global
+  let totalSi=0,totalTot=0;
+  auditoria.pils.forEach(p=>{totalSi+=p.si;totalTot+=p.tot;});
+  const globalPct=totalTot>0?Math.round(totalSi/totalTot*100):0;
+  const globalLbl=lbl(totalSi,totalTot);
+  const rT={v:'\uD83D\uDFE2 Verde \u2014 sin riesgo',a:'\uD83D\uDFE1 Amarillo \u2014 riesgo moderado',r:'\uD83D\uDD34 Rojo \u2014 riesgo cr\u00edtico','':'No registrado'};
+
+  // Colores de resultado global
+  const gColors={'bge':'#1A6B2F','bgy':'#7A5200','bgr':'#8B1A1A'};
+  const gBg={'bge':'#E5F5EA','bgy':'#FFF8E1','bgr':'#FDEAEA'};
+  const gc=gColors[globalLbl.c]||'#333',gbg=gBg[globalLbl.c]||'#f5f5f5';
+
+  let h='';
+
+  // Card: resumen global
+  h+=`<div class="card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="width:48px;height:48px;border-radius:50%;background:var(--bl);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0">${ini(colab)}</div>
+      <div><p style="font-size:15px;font-weight:700">${colab}</p><p style="font-size:12px;color:var(--mid)">${auditoria.cargo?auditoria.cargo+' \u00b7 ':''}<strong>${suc}</strong></p></div>
+    </div>
+    <div style="background:${gbg};border-radius:10px;padding:14px;text-align:center;margin-bottom:14px">
+      <p style="font-size:32px;font-weight:700;color:${gc}">${globalPct}%</p>
+      <p style="font-size:14px;font-weight:600;color:${gc}">${globalLbl.t}</p>
+      <p style="font-size:12px;color:var(--mid);margin-top:2px">${totalSi} de ${totalTot} \u00edtems cumplidos</p>
+    </div>
+    <div class="sr"><span class="sl">TL / Supervisor</span><span class="sv">${auditoria.tl}</span></div>
+    <div class="sr"><span class="sl">Analista RH</span><span class="sv">${auditoria.rh||''}</span></div>
+    <div class="sr"><span class="sl">Fecha</span><span class="sv">${fecha}</span></div>
+  </div>`;
+
+  // Card: resultado por pilar con barras
+  h+=`<div class="card"><p class="ct">RESULTADO POR PILAR</p>`;
+  auditoria.pils.forEach(pd=>{
+    const p=PL.find(x=>x.id===pd.id);if(!p)return;
+    const pct=pd.tot>0?Math.round(pd.si/pd.tot*100):0;
+    const lb=lbl(pd.si,pd.tot);
+    const riskLabel=rT[pd.risk]||'No registrado';
+    h+=`<div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600;color:${p.color}">${p.name}</span>
+        <span class="badge ${lb.c}">${pd.si}/${pd.tot} &mdash; ${lb.t}</span>
+      </div>
+      <div class="sb"><div class="sf" style="width:${pct}%;background:${p.color}"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:3px">
+        <span style="font-size:11px;color:var(--mid)">${pct}%</span>
+        <span style="font-size:11px;color:var(--mid)">${riskLabel}</span>
+      </div>
+      ${pd.obs?`<div style="margin-top:5px;font-size:11px;color:var(--mid);background:var(--eg);border-radius:6px;padding:6px 8px">&#128203; ${pd.obs}</div>`:''}
+    </div>`;
+  });
+  h+=`</div>`;
+
+  // Recopilar todos los ítems con "no" para plan de acción
+  const itemsNo=[];
+  auditoria.pils.forEach(pd=>{
+    const p=PL.find(x=>x.id===pd.id);if(!p)return;
+    p.secs.forEach((sec,si)=>{
+      sec.items.forEach((item,ii)=>{
+        const k=si+'-'+ii;
+        const ans=(pd.answers||{})[k]||'';
+        if(ans==='no'){
+          const accionKey=pd.id+'-'+si+'-'+ii;
+          itemsNo.push({pilar:p.name,color:p.color,light:p.light,item,accion:ACCIONES[accionKey]||'Revisar con el TL y establecer un compromiso de mejora con fecha.'});
+        }
+      });
+    });
+  });
+
+  // Top 3 ítems críticos
+  if(itemsNo.length>0){
+    const top3=itemsNo.slice(0,3);
+    h+=`<div class="card" style="border-color:#E8181A;border-width:1.5px">
+      <p class="ct" style="color:#E8181A">&#9888;&#65039; PLAN DE ACCI&Oacute;N SUGERIDO &mdash; TOP ${top3.length} PUNTOS CR&Iacute;TICOS</p>`;
+    top3.forEach((x,i)=>{
+      h+=`<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:${i<top3.length-1?'1px solid var(--eg)':'none'}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="width:22px;height:22px;border-radius:50%;background:${x.color};color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
+          <span style="font-size:11px;font-weight:700;color:${x.color}">${x.pilar}</span>
+        </div>
+        <p style="font-size:12px;color:var(--dark);margin-bottom:6px;line-height:1.5"><strong>Punto incumplido:</strong> ${x.item}</p>
+        <div style="background:${x.light};border-left:3px solid ${x.color};border-radius:0 6px 6px 0;padding:8px 10px;font-size:12px;color:var(--dark);line-height:1.5">
+          &#128161; <strong>Acci&oacute;n sugerida:</strong> ${x.accion}
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    // Si hay más de 3, mostrar los restantes resumidos
+    if(itemsNo.length>3){
+      h+=`<div class="card" style="background:var(--eg)">
+        <p class="ct">OTROS PUNTOS A TRABAJAR (${itemsNo.length-3})</p>`;
+      itemsNo.slice(3).forEach(x=>{
+        h+=`<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--brd)">
+          <span style="width:8px;height:8px;border-radius:50%;background:${x.color};flex-shrink:0;margin-top:5px"></span>
+          <span style="font-size:12px;color:var(--mid);line-height:1.5">${x.item}</span>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+  } else {
+    h+=`<div class="card" style="background:var(--okl);border-color:var(--ok);text-align:center;padding:20px">
+      <p style="font-size:24px;margin-bottom:8px">&#127881;</p>
+      <p style="font-size:14px;font-weight:700;color:var(--ok)">&#161;Excelente desempe&ntilde;o!</p>
+      <p style="font-size:12px;color:var(--ok);margin-top:4px">No se identificaron puntos cr&iacute;ticos en esta auditor&iacute;a.</p>
+    </div>`;
+  }
+
+  document.getElementById('resb').innerHTML=h;
+}
+
+window.guardar=async function(){
+  sObs();
+  const pils=sel.map(pid=>{const sc=calcSc(pid);return{id:pid,answers:JSON.parse(JSON.stringify(sD[pid])),risk:rM[pid]||'',obs:oM[pid]||'',si:sc.si,tot:sc.tot};});
+  const a={suc:document.getElementById('fs').value.trim(),colab:document.getElementById('fc').value.trim(),cargo:document.getElementById('fca').value.trim(),tl:document.getElementById('ft').value.trim(),rh:CU.nombre,rh_id:CU.id,fecha:document.getElementById('ff').value||new Date().toISOString().slice(0,10),pils,creadoEn:new Date().toISOString()};
+  try{
+    await addDoc(collection(db,'auditorias'),a);
+    toast('\u2714 Auditor\u00eda guardada en la nube \u2601\ufe0f',true);
+    sel=[];sD={};rM={};oM={};ci=0;buildPL();
+    await loadStats();aAll=await fetchAud();
+    buildResumen(a);
+    goTo('s-resumen');
+  }catch(e){toast('\u2716 Error: '+e.message,false);}
+};
+
+// ── CAMBIAR PIN ─────────────────────────────────────────────────────────────
+window.pn2=(i,pre)=>{if(document.getElementById(pre+i).value&&i<3)document.getElementById(pre+(i+1)).focus();};
+window.pb2=(e,i,pre)=>{if(e.key==='Backspace'&&!document.getElementById(pre+i).value&&i>0)document.getElementById(pre+(i-1)).focus();};
+
+window.limpiarPinForm=function(){
+  ['pc','pn','pp'].forEach(pre=>[0,1,2,3].forEach(i=>{const el=document.getElementById(pre+i);if(el)el.value='';}));
+  const err=document.getElementById('pin-err');if(err)err.textContent='';
+};
+
+window.cambiarPin=async function(){
+  const pinActual=[0,1,2,3].map(i=>document.getElementById('pc'+i).value).join('');
+  const pinNuevo=[0,1,2,3].map(i=>document.getElementById('pn'+i).value).join('');
+  const pinConfirm=[0,1,2,3].map(i=>document.getElementById('pp'+i).value).join('');
+  const err=document.getElementById('pin-err');err.textContent='';
+  if(pinActual.length<4||pinNuevo.length<4||pinConfirm.length<4){err.textContent='Completa todos los campos.';return;}
+  if(pinActual!==CU.pin){err.textContent='El PIN actual no es correcto.';return;}
+  if(pinNuevo!==pinConfirm){err.textContent='El nuevo PIN y la confirmaci\u00f3n no coinciden.';return;}
+  if(pinNuevo===pinActual){err.textContent='El nuevo PIN debe ser diferente al actual.';return;}
+  try{
+    await setDoc(doc(db,'usuarios',CU.id),{...CU,pin:pinNuevo});
+    CU.pin=pinNuevo;
+    limpiarPinForm();
+    toast('\u2714 PIN actualizado correctamente',true);
+    goTo('s-home');
+  }catch(e){err.textContent='Error al actualizar: '+e.message;}
+};
+
+buildPL();initAdmin();
+</script>
+</body>
+</html>
