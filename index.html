@@ -496,7 +496,7 @@ window.showD=function(id){
       +'<p style="font-size:20px;margin-bottom:6px">&#127881;</p>'
       +'<p style="font-size:13px;font-weight:700;color:var(--ok)">Sin puntos cr&iacute;ticos</p></div>';
   }
-  h+='<button class="btn bg2" id="btn-tog-'+a.id+'" onclick="togItems(''+a.id+'')" style="margin-top:4px">&#128203; Ver detalle de &iacute;tems</button>';
+h+='<button class="btn bg2" id="btn-tog-'+a.id+'" onclick="togItems(this.dataset.id)" data-id="'+a.id+'" style="margin-top:4px">&#128203; Ver detalle de &iacute;tems</button>';
   h+='<div id="itd-'+a.id+'" style="display:none;margin-top:8px">';
   a.pils.forEach(function(pd){
     const p=PL.find(function(x){return x.id===pd.id;});if(!p)return;
@@ -513,12 +513,13 @@ window.showD=function(id){
     h+='</div>';
   });
   h+='</div>';
-  if(CU.rol==='gerente')h+='<button class="btn bd" onclick="delA(''+a.id+'')" style="margin-top:4px">&#128465; Eliminar auditor&iacute;a</button>';
+if(CU.rol==='gerente')h+='<button class="btn bd" onclick="delA(this.dataset.id)" data-id="'+a.id+'" style="margin-top:4px">&#128465; Eliminar auditor&iacute;a</button>';
   document.getElementById('detb').innerHTML=h;
   goTo('s-det');
 };
 
-window.togItems=function(id){
+window.togItems=function(idOrBtn){
+  var id=typeof idOrBtn==='string'?idOrBtn:(idOrBtn.dataset?idOrBtn.dataset.id:idOrBtn);
   const el=document.getElementById('itd-'+id);
   const btn=document.getElementById('btn-tog-'+id);
   if(!el||!btn)return;
