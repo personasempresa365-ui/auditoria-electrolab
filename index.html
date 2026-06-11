@@ -885,15 +885,15 @@ window.cambiarPin=async function(){
 };
 
 // Explicit window assignments to ensure mobile onclick works
+// ── Global assignments for mobile onclick compatibility ──
 window.iniciar=iniciar;
 window.togItems=togItems;
 window.goTo=goTo;
-window.togP=function(id){const i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
+window.togP=function(id){var i=sel.indexOf(id);if(i>=0)sel.splice(i,1);else sel.push(id);buildPL();};
 window.jmp=function(i){ci=i;sObs();rEval();};
 window.sA=function(pid,k,v){sD[pid][k]=sD[pid][k]===v?'':v;rEval();autoRisk(pid);};
 window.navP=function(d){sObs();ci+=d;rEval();};
 window.guardar=guardar;
-window.doLogin=doLogin;
 window.doLogout=doLogout;
 window.loadHist=loadHist;
 window.filtH=filtH;
@@ -904,10 +904,6 @@ window.delU=delU;
 window.crearU=crearU;
 window.cambiarPin=cambiarPin;
 window.limpiarPinForm=limpiarPinForm;
-window.pn=pn;
-window.pb=pb;
-window.pn2=pn2;
-window.pb2=pb2;
 
 buildPL();
 initAdmin();
