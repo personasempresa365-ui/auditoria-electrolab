@@ -911,103 +911,99 @@ window.descPDF=descPDF;
 
 // ── GENERAR PDF ───────────────────────────────────────────────────────────
 window.descPDF=function(){
+  // Check jsPDF loaded
+  if(!window.jspdf||!window.jspdf.jsPDF){
+    toast('\u2716 Cargando librería PDF, intenta de nuevo en 5 seg.',false);
+    return;
+  }
   const a=aAll.find(x=>x.id===window._detId);
-  if(!a){toast('\u2716 No se encontr\u00f3 la auditor\u00eda',false);return;}
+  if(!a){toast('\u2716 No se encontró la auditoría',false);return;}
   try{
     const {jsPDF}=window.jspdf;
     const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const PW=210,ML=14,MR=14,W=PW-ML-MR;
     let y=14;
-    const rT={v:'\uD83D\uDFE2 Verde \u2014 sin riesgo',a:'\uD83D\uDFE1 Amarillo \u2014 moderado',r:'\uD83D\uDD34 Rojo \u2014 cr\u00edtico','':'No registrado'};
+    const rT={v:'Verde - sin riesgo',a:'Amarillo - moderado',r:'Rojo - critico','':'No registrado'};
 
-    function chk(h){if(y+h>280){doc.addPage();y=14;}}
-    function line(color){doc.setDrawColor(color||'#E0E0E0');doc.setLineWidth(0.3);doc.line(ML,y,ML+W,y);y+=3;}
+    function chk(h){if(y+h>275){doc.addPage();y=14;}}
 
     // Header banner
     doc.setFillColor(232,24,26);
     doc.rect(0,0,PW,22,'F');
     doc.setTextColor(255,255,255);
     doc.setFontSize(13);doc.setFont('helvetica','bold');
-    doc.text('Auditor\u00eda de Tienda \u2014 Electrolab Medic',ML,10);
+    doc.text('Auditoria de Tienda - Electrolab Medic',ML,10);
     doc.setFontSize(9);doc.setFont('helvetica','normal');
-    doc.text('Recursos Humanos \u2014 Reporte de Resultados',ML,16);
+    doc.text('Recursos Humanos - Reporte de Resultados',ML,16);
     y=28;
 
-    // Colaborador info
+    // Info colaborador
     doc.setTextColor(26,26,26);
     doc.setFontSize(14);doc.setFont('helvetica','bold');
     doc.text(a.colab,ML,y);y+=6;
     doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
-    if(a.cargo)doc.text(a.cargo+' \u00b7 '+a.suc,ML,y);
-    else doc.text(a.suc,ML,y);
-    y+=5;
-    doc.text('TL: '+a.tl+'   \u2022   Analista RH: '+(a.rh||'')+'   \u2022   Fecha: '+a.fecha,ML,y);
-    y+=7;line();
+    doc.text((a.cargo?a.cargo+' - ':'')+a.suc,ML,y);y+=5;
+    doc.text('TL: '+a.tl+'   |   RH: '+(a.rh||'')+'   |   Fecha: '+a.fecha,ML,y);
+    y+=8;
+    doc.setDrawColor(224,224,224);doc.setLineWidth(0.3);
+    doc.line(ML,y,ML+W,y);y+=5;
 
     // Puntaje global
     let totalSi=0,totalTot=0;
-    a.pils.forEach(p=>{totalSi+=p.si;totalTot+=p.tot;});
+    a.pils.forEach(function(p){totalSi+=p.si;totalTot+=p.tot;});
     const globalPct=totalTot>0?Math.round(totalSi/totalTot*100):0;
     const lb=lbl(totalSi,totalTot);
-    const gcol={'bge':[26,107,47],'bgy':[122,82,0],'bgr':[139,26,26]};
-    const gbg={'bge':[229,245,234],'bgy':[255,248,225],'bgr':[253,234,234]};
-    const gc=gcol[lb.c]||[50,50,50],gb=gbg[lb.c]||[245,245,245];
+    const gcols={'bge':[26,107,47],'bgy':[122,82,0],'bgr':[139,26,26]};
+    const gbgs={'bge':[229,245,234],'bgy':[255,248,225],'bgr':[253,234,234]};
+    const gc=gcols[lb.c]||[50,50,50];
+    const gb=gbgs[lb.c]||[245,245,245];
 
     chk(22);
     doc.setFillColor(gb[0],gb[1],gb[2]);
     doc.roundedRect(ML,y,W,18,2,2,'F');
     doc.setTextColor(gc[0],gc[1],gc[2]);
     doc.setFontSize(22);doc.setFont('helvetica','bold');
-    doc.text(globalPct+'%',ML+6,y+11);
-    doc.setFontSize(12);doc.setFont('helvetica','bold');
-    doc.text(lb.t,ML+28,y+8);
-    doc.setFontSize(9);doc.setFont('helvetica','normal');
-    doc.text(totalSi+' de '+totalTot+' \u00edtems cumplidos',ML+28,y+14);
-    y+=24;line();
+    doc.text(globalPct+'%',ML+6,y+12);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text(lb.t,ML+28,y+9);
+    doc.setFontSize(8.5);doc.setFont('helvetica','normal');
+    doc.text(totalSi+' de '+totalTot+' items cumplidos',ML+28,y+15);
+    y+=24;
+    doc.setDrawColor(224,224,224);doc.line(ML,y,ML+W,y);y+=5;
 
-    // Resultado por pilar
-    chk(8);
+    // Por pilar
     doc.setTextColor(100,100,100);doc.setFontSize(8);doc.setFont('helvetica','bold');
     doc.text('RESULTADO POR PILAR',ML,y);y+=5;
 
-    const pcolors={
-      p1:[13,74,138],p2:[26,107,47],p3:[90,31,138],
-      r1:[10,92,92],r2:[26,107,47],r3:[122,46,0]
-    };
+    const pcolors={p1:[13,74,138],p2:[26,107,47],p3:[90,31,138],r1:[10,92,92],r2:[26,107,47],r3:[122,46,0]};
 
     a.pils.forEach(function(pd){
       const p=PL.find(function(x){return x.id===pd.id;});if(!p)return;
       const pct=pd.tot>0?Math.round(pd.si/pd.tot*100):0;
       const plb=lbl(pd.si,pd.tot);
       const pc=pcolors[pd.id]||[100,100,100];
-      chk(14);
+      chk(16);
       doc.setTextColor(pc[0],pc[1],pc[2]);
       doc.setFontSize(9);doc.setFont('helvetica','bold');
       doc.text(p.name,ML,y);
-      doc.setTextColor(100,100,100);doc.setFont('helvetica','normal');
-      doc.text(pd.si+'/'+pd.tot+' \u2014 '+plb.t+' \u2014 '+pct+'%',ML+W-40,y);
+      doc.setTextColor(80,80,80);doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.text(pd.si+'/'+pd.tot+' - '+plb.t+' - '+pct+'%',ML+W-42,y);
       y+=4;
-      // bar background
       doc.setFillColor(224,224,224);
       doc.roundedRect(ML,y,W,3,1,1,'F');
-      // bar fill
-      doc.setFillColor(pc[0],pc[1],pc[2]);
-      doc.roundedRect(ML,y,(W*pct/100)||1,3,1,1,'F');
-      y+=6;
-      if(pd.risk){
-        doc.setTextColor(120,120,120);doc.setFontSize(7.5);
-        doc.text('Riesgo: '+(rT[pd.risk]||''),ML,y);y+=4;
-      }
+      if(pct>0){doc.setFillColor(pc[0],pc[1],pc[2]);doc.roundedRect(ML,y,W*pct/100,3,1,1,'F');}
+      y+=5;
+      doc.setTextColor(120,120,120);doc.setFontSize(7.5);
+      if(pd.risk)doc.text('Riesgo: '+rT[pd.risk],ML,y);
+      y+=4;
       if(pd.obs){
-        doc.setTextColor(120,120,120);doc.setFontSize(7.5);
-        const obsLines=doc.splitTextToSize('Obs: '+pd.obs,W);
-        chk(obsLines.length*4);
-        doc.text(obsLines,ML,y);y+=obsLines.length*4;
+        const ol=doc.splitTextToSize('Obs: '+pd.obs,W);
+        chk(ol.length*3.5+2);doc.text(ol,ML,y);y+=ol.length*3.5+2;
       }
       y+=2;
     });
 
-    line();y+=2;
+    doc.setDrawColor(224,224,224);doc.line(ML,y,ML+W,y);y+=5;
 
     // Plan de acción
     const itemsNo=[];
@@ -1027,86 +1023,73 @@ window.descPDF=function(){
     if(itemsNo.length>0){
       chk(10);
       doc.setFillColor(232,24,26);
-      doc.rect(ML,y,W,6,'F');
+      doc.rect(ML,y,W,7,'F');
       doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
-      doc.text('\u26A0 PLAN DE ACCI\u00d3N SUGERIDO',ML+2,y+4);
-      y+=9;
+      doc.text('PLAN DE ACCION SUGERIDO - TOP 3 PUNTOS CRITICOS',ML+2,y+4.5);
+      y+=10;
 
-      const top3=itemsNo.slice(0,3);
-      top3.forEach(function(x,i){
-        chk(28);
+      itemsNo.slice(0,3).forEach(function(x,i){
         const pc=x.color;
-        // number circle
+        chk(30);
         doc.setFillColor(pc[0],pc[1],pc[2]);
         doc.circle(ML+3,y+2,3,'F');
         doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont('helvetica','bold');
-        doc.text(String(i+1),ML+1.8,y+3.2);
-        // pilar name
-        doc.setTextColor(pc[0],pc[1],pc[2]);doc.setFontSize(8.5);
+        doc.text(String(i+1),i<9?ML+1.8:ML+1,y+3.2);
+        doc.setTextColor(pc[0],pc[1],pc[2]);doc.setFontSize(9);
         doc.text(x.pilar,ML+9,y+3.5);
         y+=8;
-        // punto incumplido
         doc.setTextColor(26,26,26);doc.setFontSize(8);doc.setFont('helvetica','bold');
-        doc.text('Punto:',ML+2,y);
-        doc.setFont('helvetica','normal');
-        const itemLines=doc.splitTextToSize(x.item,W-12);
-        chk(itemLines.length*4+4);
-        doc.text(itemLines,ML+18,y);
-        y+=itemLines.length*4+2;
-        // acción sugerida
+        const ilines=doc.splitTextToSize('Punto: '+x.item,W-4);
+        chk(ilines.length*4+2);doc.text(ilines,ML+2,y);y+=ilines.length*4+2;
         doc.setFillColor(245,245,245);
-        const acLines=doc.splitTextToSize(x.accion,W-8);
-        const acH=acLines.length*4+5;
-        chk(acH);
-        doc.roundedRect(ML,y,W,acH,1,1,'F');
-        doc.setFillColor(pc[0],pc[1],pc[2]);
-        doc.rect(ML,y,2,acH,'F');
-        doc.setTextColor(26,26,26);doc.setFontSize(8);doc.setFont('helvetica','normal');
-        doc.text(acLines,ML+5,y+4);
-        y+=acH+5;
+        const alines=doc.splitTextToSize(x.accion,W-8);
+        const ah=alines.length*4+6;
+        chk(ah+2);
+        doc.roundedRect(ML,y,W,ah,1,1,'F');
+        doc.setFillColor(pc[0],pc[1],pc[2]);doc.rect(ML,y,2,ah,'F');
+        doc.setTextColor(40,40,40);doc.setFontSize(8);doc.setFont('helvetica','normal');
+        doc.text(alines,ML+5,y+4);
+        y+=ah+6;
       });
 
-      // Puntos adicionales
       if(itemsNo.length>3){
         chk(8);
-        doc.setTextColor(100,100,100);doc.setFontSize(8);doc.setFont('helvetica','bold');
-        doc.text('OTROS PUNTOS A TRABAJAR:',ML,y);y+=5;
+        doc.setTextColor(80,80,80);doc.setFontSize(8);doc.setFont('helvetica','bold');
+        doc.text('Otros puntos a trabajar:',ML,y);y+=5;
         itemsNo.slice(3).forEach(function(x){
-          const pc=x.color;
-          doc.setFillColor(pc[0],pc[1],pc[2]);
-          doc.circle(ML+2,y+0.5,1.5,'F');
-          doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');
-          const lines=doc.splitTextToSize(x.item,W-8);
-          chk(lines.length*4+3);
-          doc.text(lines,ML+6,y+1);
-          y+=lines.length*4+3;
+          const lines=doc.splitTextToSize('- '+x.item,W-4);
+          chk(lines.length*3.5+2);
+          doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+          doc.text(lines,ML+2,y);y+=lines.length*3.5+3;
         });
       }
     } else {
       chk(12);
-      doc.setFillColor(229,245,234);
-      doc.roundedRect(ML,y,W,10,2,2,'F');
+      doc.setFillColor(229,245,234);doc.roundedRect(ML,y,W,10,2,2,'F');
       doc.setTextColor(26,107,47);doc.setFontSize(10);doc.setFont('helvetica','bold');
-      doc.text('\uD83C\uDF89 \u00a1Excelente desempe\u00f1o! Sin puntos cr\u00edticos.',ML+4,y+6.5);
+      doc.text('Excelente desempeno! Sin puntos criticos identificados.',ML+4,y+6.5);
       y+=14;
     }
 
-    // Footer
+    // Footer en cada página
     const pages=doc.internal.getNumberOfPages();
-    for(let i=1;i<=pages;i++){
+    for(var i=1;i<=pages;i++){
       doc.setPage(i);
-      doc.setFillColor(245,245,245);
-      doc.rect(0,285,PW,12,'F');
+      doc.setFillColor(245,245,245);doc.rect(0,285,PW,12,'F');
       doc.setTextColor(150,150,150);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
-      doc.text('Electrolab Medic \u2014 Uso interno \u2014 Generado el '+new Date().toLocaleDateString('es-SV'),ML,291);
-      doc.text('P\u00e1gina '+i+' de '+pages,PW-ML,291,{align:'right'});
+      doc.text('Electrolab Medic - Uso interno - '+new Date().toLocaleDateString('es-SV'),ML,291);
+      doc.text('Pag '+i+' de '+pages,PW-ML,291,{align:'right'});
     }
 
     const fname='Auditoria_'+a.colab.replace(/\s+/g,'_')+'_'+a.fecha+'.pdf';
     doc.save(fname);
-    toast('\u2714 PDF generado: '+fname,true);
-  }catch(e){toast('\u2716 Error al generar PDF: '+e.message,false);console.error(e);}
+    toast('\u2714 PDF descargado correctamente',true);
+  }catch(e){
+    console.error('PDF error:',e);
+    toast('\u2716 Error PDF: '+e.message,false);
+  }
 };
+
 
 buildPL();
 initAdmin();
